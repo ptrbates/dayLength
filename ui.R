@@ -13,6 +13,8 @@ shinyUI(fluidPage(
       br(),
       htmlOutput("text2"),
       br(),
+      htmlOutput("text3"),
+      br(),
       dateInput("date", 
                 "Please select the date of interest:",
                 min = min(df.dayLength$date),
@@ -21,7 +23,8 @@ shinyUI(fluidPage(
     ),
     # Show a plot of the generated distribution
     mainPanel(
-       plotOutput("lengthPlot")
+       plotOutput("lengthPlot"),
+       plotOutput("changePlot")
     )
   )
 ))
