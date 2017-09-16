@@ -1,30 +1,35 @@
 library(shiny)
 
-# Define UI for application that draws a histogram
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Length of Days (hours)"),
+  titlePanel(""),
   
-  # Sidebar with a slider input for number of bins 
+  # Sidebar includes date selection, as well as view selection
   sidebarLayout(
     sidebarPanel(
-      htmlOutput("text1"),
-      br(),
-      htmlOutput("text2"),
-      br(),
-      htmlOutput("text3"),
-      br(),
+      
+      # Date selection
       dateInput("date", 
-                "Please select the date of interest:",
+                "Select the date of interest:",
                 min = min(df.dayLength$date),
                 max = max(df.dayLength$date),
-                value = date())
+                value = date()),
+      
+      # View selection
+      radioButtons("radio1", "Select the desired view:",
+                       c("Length of Day" = "day_length",
+                         "Change in Day Length" = "change",
+                         "Total Light Time" = "total"),
+                   selected = "day_length"),
+      
+      # Text output, given date and view selection
+      htmlOutput("text1")
     ),
-    # Show a plot of the generated distribution
+    
+    # Main panel shows the view selected
     mainPanel(
-       plotOutput("lengthPlot"),
-       plotOutput("changePlot")
+       plotOutput("plot1")
     )
   )
 ))
