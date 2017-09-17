@@ -1,9 +1,12 @@
 library(shiny)
 library(ggplot2)
 
-# Define server logic required to draw a histogram
+# Load the data frame
+load('dayLength.Rdata')
+
 shinyServer(function(input, output) {
   
+  # Define plot1
   output$plot1 <- renderPlot({
     # Find the index of the date selected
     ind <- which(df.dayLength$date == as.Date(input$date, 
@@ -12,11 +15,11 @@ shinyServer(function(input, output) {
     # Specify the plot labels, given the radio option selected
     titles <- switch(input$radio1,
                      day_length = c("Daylight Curve", 
-                                    "Date", "Day Length (hr)"),
+                                    "", "Day Length (hr)"),
                      change = c("Change in Daylight", 
-                                "Date", "Change in Day Length (s)"),
+                                "", "Change in Day Length (s)"),
                      total = c("Total Light", 
-                               "Date", "Total Light (hr)"))
+                               "", "Total Light (hr)"))
     
     # Specify the limits for each graph, given the radio option selected
     lims <- switch(input$radio1,
@@ -88,6 +91,7 @@ shinyServer(function(input, output) {
       theme(plot.title = element_text(size = 25)) +
       theme(plot.title = element_text(hjust = .5)) +
       theme(axis.title = element_text(size = 17)) +
+      theme(axis.text.x = element_text(size = 12)) +
       annotate("text", 
                x = as.Date('2017-01-07'), 
                y = lims[1] + lims[2] / 12, 
@@ -100,15 +104,15 @@ shinyServer(function(input, output) {
   output$text1 <- renderUI({
     switch(input$radio1,
            day_length = HTML("In the summer, we receive more hours of daylight. In the winter, the hours of daylight we receive are reduced. The curve on this graph represents the relationship between the day of the year and the length of daylight on that day, in Portland, Oregon."),
-           change = HTML("Since each day is longer or shorter than the next, we can conclude that each day we gain or lose a certain amount of daylight. The curve on this graph represents the amount of daylight gained or lost each day.</br></br>It also shows how quickly the 'Daylight Curve' is changing: sometimes it changes quickly, other times more slowly. When the 'Daylight Curve' changes quickly, the 'Change in Daylight' curve is near a peak. When the 'Daylight Curve' changes slowly, the 'Change in Daylight' curve is near zero."),
-           total = HTML("Starting with a derivative and reconstructing the original function is the goal of <i>integration</i>.</br></br>On this graph we can see the result of applying integration to the original 'Daylight Curve'. In this case, since the curve was a representation of how much light was received per day, the integral represents the total amout of light received between January 1 and the date in question.")
+           change = HTML("Since each day is longer or shorter than the next, we can conclude that each day we gain or lose a certain amount of daylight. The curve on this graph represents the amount of daylight gained or lost each day.</br></br>It also shows how quickly the 'Daylight Curve' is changing: sometimes it changes quickly, other times more slowly. When the 'Daylight Curve' changes quickly, the 'Change in Daylight' curve is near a peak. When the 'Daylight Curve' changes slowly, the 'Change in Daylight' curve is near zero.</br></br>The 'Change in Daylight' curve is the <i>derivative</i> of the 'Daylight Curve'. This is the idea of the derivative: it describes <i>how a function changes</i>."),
+           total = HTML("Starting with a derivative and reconstructing the original function is the goal of <i>integration</i>.</br></br>On this graph we can see the result of applying integration to the original 'Daylight Curve'. In this case, since the curve was a representation of how much light was received per day, the integral represents the total amount of light received between January 1 and the date in question.")
     )
   })
   
   output$text2 <- renderUI({
     switch(input$radio1,
-           day_length = HTML("</br>Exercises:</br></br>What general class of function might be useful for describing this curve?</br>Can you write a specific equation that approximates this curve?"),
-           change = HTML("</br>The 'Change in Daylight' curve is the <i>derivative</i> of the 'Daylight Curve'. This is the idea of the derivative: it describes <i>how a function changes</i>.</br></br>Exercises:</br></br>Can you imagine going backwards from the derivative to the function itself? That is, if I told you where to start and gave you the 'Change in Daylight' curve, could you reconstruct the 'Daylight Curve'?</br></br>January 1 had 8.81 hours (31714 seconds) of daylight: give it a try!"),
+           day_length = HTML("</br>Exercises:</br></br>What general class of function might be useful for describing this curve?</br></br>Write a specific equation that approximates this curve."),
+           change = HTML("</br>Exercises:</br></br>Can you imagine going backwards from the derivative to the function itself? That is, if I told you where to start and gave you the 'Change in Daylight' curve, could you reconstruct the 'Daylight Curve'?</br></br>January 1 had 8.81 hours (31714 seconds) of daylight: give it a try!"),
            total = HTML("</br>The area under the 'Daylight Curve' is the <i>integral</i> of the 'Daylight Curve'. The integral is the inverse of the derivative; we can think of the integral as the summation of a function between given points."))
   })
   
