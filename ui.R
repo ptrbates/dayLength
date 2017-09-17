@@ -21,10 +21,8 @@ shinyUI(fluidPage(
                        c("Length of Day" = "day_length",
                          "Change in Day Length" = "change",
                          "Total Light Time" = "total"),
-                   selected = "day_length"),
+                   selected = "day_length")
       
-      # Text output, given date and view selection
-      htmlOutput("text1")
     ),
     
     # Main panel shows the view selected

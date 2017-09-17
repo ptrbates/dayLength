@@ -24,6 +24,37 @@ shinyServer(function(input, output) {
                    change = c(-300, 300),
                    total = c(0, 60000))
     
+    # Find the length of the day at the index selected
+    leng <- df.dayLength[ind,]$day_length
+    
+    # Find the change in daylight for the index selected
+    chng <- df.dayLength[ind,]$change
+    
+    # Find the total light received until the index selected
+    trec <- sum(df.dayLength$day_length[1:ind])
+    
+    # Display a message, depending on which radio button option is selected
+    annotation <- switch(input$radio1,
+           day_length = HTML(paste("Total daylight on ",
+                                   format(as.Date(df.dayLength$date[ind]),
+                                          "%B %d"),
+                                   ": \n", 
+                                   round(leng / 3600, 2),
+                                   " hours",
+                                   sep = "")),
+           change = HTML(paste("Change in daylight for ",
+                               format(as.Date(df.dayLength$date[ind]),
+                                      "%B %d"),
+                               ": \n", 
+                               chng,
+                               " seconds", sep = "")),
+           total = HTML(paste("Total light received this year: \n", 
+                              round(trec / 3600, 1),
+                              " hours (",
+                              round(100 * trec / sum(df.dayLength$day_length), 1),
+                              "% of total for the year)", sep = ""))
+    )
+           
     # Generate a ggplot line graph of the year, by the radio button option selected
     g <- ggplot(data = df.dayLength, aes(x = date))
     if(input$radio1 == "total") {
@@ -49,43 +80,14 @@ shinyServer(function(input, output) {
       theme_linedraw() +
       theme(plot.title = element_text(size = 25)) +
       theme(plot.title = element_text(hjust = .5)) +
-      theme(axis.title = element_text(size = 17))
+      theme(axis.title = element_text(size = 17)) +
+      annotate("text", 
+               x = as.Date('2017-01-07'), 
+               y = lims[1] + lims[2] / 12, 
+               label = annotation,
+               hjust = 0,
+               size = 4)
     
   })
   
-  output$text1 <- renderUI({
-    # Find the index of the date selected
-    ind <- which(df.dayLength$date == as.Date(input$date, 
-                                              format = "%a %b %d %H:%M:%S %Y"))
-    
-    # Find the length of the day at the index selected
-    leng <- df.dayLength[ind,]$day_length
-    
-    # Find the change in daylight for the index selected
-    chng <- df.dayLength[ind,]$change
-    
-    # Find the total light received until the index selected
-    trec <- sum(df.dayLength$day_length[1:ind])
-    
-    # Display a message, depending on which radio button option is selected
-    switch(input$radio1,
-           day_length = HTML(paste("Length of day selected: <br/>", 
-                                   round(leng / 3600, 1),
-                                   " hours (",
-                                   leng,
-                                   " seconds)",
-                                   sep = "")),
-           change = HTML(paste("Daily change in daylight: <br/>", 
-                               round(chng / 3600, 3),
-                               " hours (",
-                               chng,
-                               " seconds)", sep = "")),
-           total = HTML(paste("Total light received this year: <br/>", 
-                              round(trec / 3600, 1),
-                              " hours <br/>(",
-                              round(100 * trec / sum(df.dayLength$day_length), 1),
-                              "% of total for the year)", sep = ""))
-           
-    )
-  })
 })
