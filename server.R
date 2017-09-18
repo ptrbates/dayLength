@@ -19,7 +19,7 @@ shinyServer(function(input, output) {
                      change = c("Change in Daylight", 
                                 "", "Change in Day Length (s)"),
                      total = c("Total Light", 
-                               "", "Total Light (hr)"))
+                               "", "Day Length (hr)"))
     
     # Specify the limits for each graph, given the radio option selected
     lims <- switch(input$radio1,
